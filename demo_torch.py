@@ -14,12 +14,12 @@ def demo():
     encoder = nn.Sequential(*layers)
 
     x = load_image('adorable-al-reves-animal-atigrado-248280.jpg')
-    y = encoder(x) # [B,K,W,H]
+    y = encoder(x) # [B,D,W,H]
     print('y shape: {}'.format(y.shape))
 
     rmac = RMAC(y.shape, levels=5, norm_fm=True, sum_fm=True)
 
-    rmac_f = rmac.rmac(y)
+    rmac_f = rmac.rmac(y) # [B,D]
     print('rmac_f shape: {}'.format(rmac_f.shape))
 
 def load_image(path, bacth_size=1, target_size=(640,480)):
