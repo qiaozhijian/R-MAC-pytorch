@@ -6,7 +6,9 @@ import numpy as np
 from rmac_torch import RMAC
 
 def demo():
-    encoder = models.vgg16(pretrained=False).cuda()
+    encoder = models.vgg16(pretrained=False)
+    if torch.cuda.is_available():
+        encoder = encoder.cuda()
     # capture only feature part and remove last relu and maxpool
     layers = list(encoder.features.children())[:-2]
     encoder = nn.Sequential(*layers)
@@ -20,11 +22,13 @@ def demo():
     rmac_f = rmac.rmac(y)
     print('rmac_f shape: {}'.format(rmac_f.shape))
 
-def load_image(path, bacth_size=2, target_size=(640,480)):
+def load_image(path, bacth_size=1, target_size=(640,480)):
     x = Image.open(path).resize(target_size,Image.ANTIALIAS)
     x = np.array(x)
     x = torch.from_numpy(x).float()
-    x = x.unsqueeze(0).repeat(bacth_size,1,1,1).permute(0,3,1,2).cuda()
+    x = x.unsqueeze(0).repeat(bacth_size,1,1,1).permute(0,3,1,2)
+    if torch.cuda.is_available():
+        x = x.cuda()
     return x
 
 if __name__ == '__main__':
